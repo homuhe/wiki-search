@@ -36,5 +36,6 @@ build.log
 #  syntax: regexp
 #  ^\.pc/
 
-wiki-search/src/main/output/*
-wiki-search/src/main/resources/*
+/src/main/resources/tubadw-r1-ir-sample-100000
+/src/main/resources/tubadw-r1-ir-sample-100000.gz
+/src/main/output/index.txt
