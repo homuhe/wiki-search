@@ -4,23 +4,33 @@ import java.io.PrintWriter
 import scala.collection.mutable
 import scala.io.Source
 
-/** Author: Alexander Hartmann, Holger Muth-Hellebrandt
-  * Creates inverted indices of types occurring in resource.
+/** Author:       Alexander Hartmann,
+  *               Holger Muth-Hellebrandt
+  *
+  * Description:  Creates inverted indices of types occurring in resource.
   */
 
 object IndexCreator {
 
-  val fileName1 = "src/main/resources/tubadw-r1-ir-sample-1000"
-  val fileName2 = "src/main/output/small_index.txt"
+  var input = "src/main/resources/tubadw-r1-ir-sample-1000"
+  var output = "src/main/output/small_index.txt"
   val inverted = mutable.HashMap[String, mutable.SortedSet[Int]]()
 
   def main(args: Array[String]): Unit = {
 
-    createIndices(extractLines(fileName1))
-    writeIndices(fileName2)
+    if (args.length == 2) {
+      input = args(0)
+      output = args(1)
+    }
+
+    println("Processing...")
+
+    createIndices(extractLines(input))
+    writeIndices(output)
+
+    println(s"Successly created ${output.split("/").last} - Done!")
 
   }
-
 
   def extractLines(file: String) = {
     val lines = Source.fromFile(file)
