@@ -6,7 +6,6 @@ import scala.io.Source
 
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
-  *
   * Description:  Creates inverted indices of types occurring in resource.
   */
 
