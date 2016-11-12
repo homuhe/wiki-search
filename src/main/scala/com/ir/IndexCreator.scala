@@ -4,7 +4,7 @@ import java.io.PrintWriter
 import scala.collection.mutable
 import scala.io.Source
 
-/**
+/** Author: Alexander Hartmann, Holger Muth-Hellebrandt
   * Creates inverted indices of types occurring in resource.
   */
 
