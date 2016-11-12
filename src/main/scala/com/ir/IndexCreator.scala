@@ -32,6 +32,11 @@ object IndexCreator {
 
   }
 
+  /**
+    * Reads input file and separates at tabs
+    * @param file: set of German Wiki in tab-separated CONLL-X dependency format
+    * @return lines: Iterator over an array of strings
+    */
   def extractLines(file: String) = {
     val lines = Source.fromFile(file)
       .getLines()
@@ -39,6 +44,10 @@ object IndexCreator {
     lines
   }
 
+  /**
+    * Creates a Hashmap which maps each type to document identifier.
+    * @param lines: Iterator over an array of strings
+    */
   def createIndices(lines: Iterator[Array[String]]) = {
     for (line <- lines) {
       if (line.length > 1) {
