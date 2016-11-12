@@ -10,8 +10,8 @@ import scala.io.Source
 
 object IndexCreator {
 
-  val fileName1 = "src/main/resources/tubadw-r1-ir-sample-100000"
-  val fileName2 = "src/main/output/index.txt"
+  val fileName1 = "src/main/resources/tubadw-r1-ir-sample-1000"
+  val fileName2 = "src/main/output/small_index.txt"
   val inverted = mutable.HashMap[String, mutable.SortedSet[Int]]()
 
   def main(args: Array[String]): Unit = {
