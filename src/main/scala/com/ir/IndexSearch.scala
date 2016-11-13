@@ -17,7 +17,7 @@ object IndexSearch {
 
 
   val input = "src/main/output/small_index.txt"
-  val inverted = mutable.HashMap[String, Array[String]]()
+  val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
 
@@ -42,15 +42,17 @@ object IndexSearch {
 
     for (line <- lines) {
       val lemma = line.split("\t")(0)
-      val indices = line.split("\t")(1).split("\\s+")
+      val indices: Array[Int] = line.split("\t")(1)
+                                    .split("\\s+")
+                                    .map(element => element.toInt)
 
       inverted += lemma -> indices
     }
 
     //only for testing
     for (entry <- inverted) {
-      print(s"key: ${entry._1}, indices: ")
-      entry._2.foreach(number => print(s"$number "))
+      print(s"key: ${entry._1}, indices:")
+      entry._2.foreach(number => print(s" $number"))
       println()
     }
   }
