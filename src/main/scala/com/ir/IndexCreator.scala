@@ -15,6 +15,12 @@ object IndexCreator {
   var output = "src/main/output/small_index.txt"
   val inverted = mutable.HashMap[String, mutable.SortedSet[Int]]()
 
+  /**
+    * Main method including an option for the command line to execute the programm
+    * which takes the arguments:
+    * 1) input: the given wiki file in the CONLL-X format
+    * 2) output: name of the output file for the inverted indices created
+    */
   def main(args: Array[String]): Unit = {
 
     if (args.length == 2) {
@@ -62,6 +68,11 @@ object IndexCreator {
     }
   }
 
+
+  /**
+    * Reads the stored map and writes it into a text file
+    * @param file: String for the name of the output file
+    */
   def writeIndices(file: String) = {
     new PrintWriter(file) {
       for ((lem, ids) <- inverted) {
