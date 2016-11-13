@@ -1,5 +1,8 @@
 package com.ir
 
+import scala.collection.mutable
+import scala.io.Source
+
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
   *
@@ -13,6 +16,8 @@ package com.ir
 object IndexSearch {
 
 
+  val input = "src/main/output/small_index.txt"
+  val inverted = mutable.HashMap[String, Array[String]]()
 
   def main(args: Array[String]): Unit = {
 
@@ -21,12 +26,33 @@ object IndexSearch {
 
 
     println("Please, type in the search terms and press Enter...")
-    var query = scala.io.StdIn.readLine()
-    println(query)
+    val query = scala.io.StdIn.readLine()
 
     //separate by empty space
-    var array = query.split("\\s+")
+    val array = query.split("\\s+")
     array.foreach(println)
+
+    extractLines(input)
+
+  }
+
+  def extractLines(file: String) = {
+    val lines = Source.fromFile(file)
+      .getLines()
+
+    for (line <- lines) {
+      val lemma = line.split("\t")(0)
+      val indices = line.split("\t")(1).split("\\s+")
+
+      inverted += lemma -> indices
+    }
+
+    //only for testing
+    for (entry <- inverted) {
+      print(s"key: ${entry._1}, indices: ")
+      entry._2.foreach(number => print(s"$number "))
+      println()
+    }
   }
 
 }
