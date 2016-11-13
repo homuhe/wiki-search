@@ -27,7 +27,7 @@ object IndexSearch {
     println("Please, type in the search terms and press Enter...")
     val query = scala.io.StdIn.readLine().split("\\s+")
 
-    print(s"Documents found with query (doc id):")
+    print(s"Documents found with query (doc id): ")
     search(query).foreach(doc_id => print(s" $doc_id"))
 
   }
@@ -53,6 +53,11 @@ object IndexSearch {
   }
 
   def search(query: Array[String]): Array[Int] = {
+
+    for (q <- query) {
+      print(s"$q ")
+      println(inverted(q).length)
+    }
 
     //INSERT MAGIC HERE
 
