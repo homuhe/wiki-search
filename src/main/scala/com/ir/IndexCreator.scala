@@ -27,6 +27,7 @@ object IndexCreator {
 
 
     // mvn scala:run -DmainClass=com.ir.IndexCreator -DaddArgs='src/main/resources/tubadw-r1-ir-sample-1000|outputfilename'
+    // Achtung: output file wird im folder wo sich die pom.xml befindet erstellt.
 
     if (args.length == 2) {
       input = args(0)
