@@ -25,6 +25,9 @@ object IndexCreator {
     */
   def main(args: Array[String]): Unit = {
 
+
+    // mvn scala:run -DmainClass=com.ir.IndexCreator -DaddArgs='src/main/resources/tubadw-r1-ir-sample-1000|outputfilename'
+
     if (args.length == 2) {
       input = args(0)
       output = args(1)
