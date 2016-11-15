@@ -31,7 +31,7 @@ object IndexSearch {
     //input should be the file with the inverted indices produced in 1.1
     readIndex(input)
 
-    println("Please, type in the search terms and press Enter...")
+    print("Please, type in the search terms and press Enter: ")
     val query = scala.io.StdIn.readLine().split("\\s+")
 
     search(query).foreach(doc_id => print(s" $doc_id"))
@@ -52,8 +52,6 @@ object IndexSearch {
 
   def search(query: Array[String]): List[Int] = {
 
-    //TODO catch notFound Exception
-    //     Can be by length 1 or more.
     var results = List[Int]()
 
     try {
@@ -71,6 +69,8 @@ object IndexSearch {
     catch {case _: Throwable => println("No results for query.")}
 
 
+
+
     def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
 
       var intersections: List[Int] = List[Int]()
@@ -78,12 +78,13 @@ object IndexSearch {
       for (doc1_num <- doc_ids1) {
         for (doc2_num <- doc_ids2) {
           if (doc1_num == doc2_num) {
-            intersections = doc1_num :: intersections
+            intersections ::= doc1_num
           }
         }
       }
       intersections
     }
+
     results
   }
 }
