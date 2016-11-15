@@ -6,6 +6,8 @@ import scala.io.Source
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
   *
+  *               TEST
+  *
   * Task:         Assignment 1.2
   * Description:  Searches inverted indices file for the given terms.
   */
