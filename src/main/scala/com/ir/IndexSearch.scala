@@ -1,5 +1,7 @@
 package com.ir
 
+import java.util.NoSuchElementException
+
 import scala.collection.mutable
 import scala.io.Source
 
@@ -32,7 +34,6 @@ object IndexSearch {
     println("Please, type in the search terms and press Enter...")
     val query = scala.io.StdIn.readLine().split("\\s+")
 
-    print(s"Documents found with query (doc id): ")
     search(query).foreach(doc_id => print(s" $doc_id"))
 
   }
@@ -52,14 +53,24 @@ object IndexSearch {
   def search(query: Array[String]): List[Int] = {
 
     //TODO catch notFound Exception
-    //      Can be by length 1 or more.
+    //     Can be by length 1 or more.
     var results = List[Int]()
 
     if (query.length == 1) {
-      results = inverted(query(0)).toList
+      try {
+        results = inverted(query(0)).toList
+      }
+      catch {
+        case _: Throwable => println(s"No results for '${query(0)}'.")
+      }
     }
     else {
-      results = intersection(inverted(query(0)), inverted(query(1)))
+      try {
+        results = intersection(inverted(query(0)), inverted(query(1)))
+      }
+      catch {
+        case _: Throwable => println(s"No results for '${query(0)} + ${query(1)}'")
+      }
     }
 
     def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
