@@ -58,6 +58,7 @@ object IndexSearch {
 
     try {
 
+
       if (query.length == 1) {
         results = inverted(query(0)).toList
       }
@@ -65,8 +66,10 @@ object IndexSearch {
         results = intersection(inverted(query(0)), inverted(query(1)))
       }
 
+
     }
     catch {case _: Throwable => println("No results for query.")}
+
 
     def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
 
