@@ -16,10 +16,15 @@ import scala.io.Source
 object IndexSearch {
 
 
-  val input = "src/main/output/small_index.txt"
+  var input = "/home/holger/IdeaProjects/wiki-search/src/main/resources/small_index.txt"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
+
+
+    if (args.length == 1) {
+      input = args(0)
+    }
 
     //input should be the file with the inverted indices produced in 1.1
     readIndex(input)
@@ -53,6 +58,21 @@ object IndexSearch {
   }
 
   def search(query: Array[String]): Array[Int] = {
+
+    //TODO input is an query split by whitespaces.
+    //      Can be by length 1 or more.
+
+    if (query.length == 1) {
+      return inverted(query.head)
+    }
+    else if (query.length >1) {
+
+    }
+
+    def and(doc_ids1: Array[Int], doc_ids2: Array[Int]): Array[Int] = {
+
+      for ()
+    }
 
     for (q <- query) {
       print(s"$q ")
