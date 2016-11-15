@@ -16,7 +16,7 @@ import scala.io.Source
 object IndexSearch {
 
 
-  var input = "small_index.txt"
+  var input = "medium_index.txt"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
@@ -47,42 +47,34 @@ object IndexSearch {
                                     .map(element => element.toInt)
       inverted += lemma -> indices
     }
-
-    //only for testing
-    /**
-    for (entry <- inverted) {
-      print(s"key: ${entry._1}, indices:")
-      entry._2.foreach(number => print(s" $number"))
-      println()
-    }**/
   }
 
-  def search(query: Array[String]): Array[Int] = {
+  def search(query: Array[String]): List[Int] = {
 
-    //TODO input is an query split by whitespaces.
+    //TODO catch notFound Exception
     //      Can be by length 1 or more.
+    var results = List[Int]()
 
     if (query.length == 1) {
-      return inverted(query.head)
+      results = inverted(query(0)).toList
     }
-    /**else if (query.length >1) {
-
-    }
-
-    def and(doc_ids1: Array[Int], doc_ids2: Array[Int]): Array[Int] = {
-
-      for ()
-    }**/
-
-    for (q <- query) {
-      print(s"$q ")
-      println(inverted(q).length)
+    else {
+      results = intersection(inverted(query(0)), inverted(query(1)))
     }
 
-    //INSERT MAGIC HERE
+    def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
 
-    val bla = Array(2, 3)
-    bla
+      var intersections: List[Int] = List[Int]()
+
+      for (doc1_num <- doc_ids1) {
+        for (doc2_num <- doc_ids2) {
+          if (doc1_num == doc2_num) {
+            intersections = doc1_num :: intersections
+          }
+        }
+      }
+      intersections
+    }
+    results
   }
-
 }

@@ -13,8 +13,8 @@ import scala.io.Source
 
 object IndexCreator {
 
-  var input = "src/main/resources/tubadw-r1-ir-sample-1000"
-  var output = "small_index.txt"
+  var input = "src/main/resources/tubadw-r1-ir-sample-10000"
+  var output = "medium_index.txt"
   val inverted = mutable.HashMap[String, mutable.SortedSet[Int]]()
 
   /**
