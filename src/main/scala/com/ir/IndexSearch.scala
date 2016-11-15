@@ -1,7 +1,5 @@
 package com.ir
 
-import java.util.NoSuchElementException
-
 import scala.collection.mutable
 import scala.io.Source
 
