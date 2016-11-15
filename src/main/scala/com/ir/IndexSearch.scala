@@ -16,7 +16,7 @@ import scala.io.Source
 object IndexSearch {
 
 
-  var input = "/home/holger/IdeaProjects/wiki-search/src/main/resources/small_index.txt"
+  var input = "small_index.txt"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
@@ -65,14 +65,14 @@ object IndexSearch {
     if (query.length == 1) {
       return inverted(query.head)
     }
-    else if (query.length >1) {
+    /**else if (query.length >1) {
 
     }
 
     def and(doc_ids1: Array[Int], doc_ids2: Array[Int]): Array[Int] = {
 
       for ()
-    }
+    }**/
 
     for (q <- query) {
       print(s"$q ")
