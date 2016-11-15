@@ -56,22 +56,17 @@ object IndexSearch {
     //     Can be by length 1 or more.
     var results = List[Int]()
 
-    if (query.length == 1) {
-      try {
+    try {
+
+      if (query.length == 1) {
         results = inverted(query(0)).toList
       }
-      catch {
-        case _: Throwable => println(s"No results for '${query(0)}'.")
-      }
-    }
-    else {
-      try {
+      else {
         results = intersection(inverted(query(0)), inverted(query(1)))
       }
-      catch {
-        case _: Throwable => println(s"No results for '${query(0)} + ${query(1)}'")
-      }
+
     }
+    catch {case _: Throwable => println("No results for query.")}
 
     def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
 
