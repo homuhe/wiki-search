@@ -18,7 +18,7 @@ import scala.io.Source
 object IndexSearch {
 
   var input = "medium_index.txt"
-  val inverted = mutable.HashMap[String, Array[Int]]()
+  val inverted = mutable.HashMap[String, List[Int]]()
 
   def main(args: Array[String]): Unit = {
 
@@ -31,7 +31,7 @@ object IndexSearch {
     readIndex(input)
 
     print("Please, type in the search terms and press Enter: ")
-    val query = scala.io.StdIn.readLine().split("\\s+")
+    val query = scala.io.StdIn.readLine().split("\\s+").toList
 
     search(query).foreach(doc_id => print(s" $doc_id"))
 
@@ -42,45 +42,54 @@ object IndexSearch {
 
     for (line <- lines) {
       val lemma = line.split("\t")(0)
-      val indices: Array[Int] = line.split("\t")(1)
+      val indices: List[Int] = line.split("\t")(1)
                                     .split("\\s+")
                                     .map(element => element.toInt)
+                                      .toList
       inverted += lemma -> indices
     }
   }
 
-  def search(query: Array[String]): List[Int] = {
+  def search(query: List[String]): List[Int] = {
 
-    var mapvalues: List[Array[Int]] = List[Array[Int]]()
-    for (i <- query.indices) {mapvalues ::= inverted(query(i))}
+    var query_values: List[List[Int]] = List[List[Int]]()
+    for (i <- query.indices) {query_values ::= inverted(query(i))}
 
     var results = List[Int]()
 
     try {
       if (query.length == 1) {
-        results = inverted(query(0)).toList
+        results = inverted(query.head)
       }
       else {
-        results = intersect(mapvalues)
+        results = intersect(query_values)
       }
     }
     catch {case _: Throwable => println("No results for query.")}
 
 
 
-    def intersect(doc_ids: List[Array[Int]]): List[Int] = {
+    def intersect(doc_ids: List[List[Int]]): List[Int] = {
       var intersections: List[Int] = List[Int]()
-      if (intersections.isEmpty) {
-        for (num <- doc_ids.head) {
-          intersections ::= num
-        }
+
+      for (num <- doc_ids.head) {
+        intersections ::= num
       }
-      else {
-        for (doc_id <- doc_ids.tail) {
-          for (num <- doc_id) {
-            intersections = intersections.filter(_ == num)
+      for (doc_id <- doc_ids.tail) {
+        intersections = and(doc_id, intersections)
+
+        def and(l1: List[Int], l2: List[Int]): List[Int] = {
+          var inter = List[Int]()
+          for (element1 <- l1) {
+            for (element2 <- l2) {
+              if (element1 == element2) {
+                inter ::= element1
+              }
+            }
           }
+          inter
         }
+        //intersections = intersections.intersect(doc_id)
       }
       intersections
     }
