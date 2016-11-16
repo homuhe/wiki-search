@@ -78,7 +78,7 @@ object IndexSearch {
       else {
         for (doc_id <- doc_ids.tail) {
           for (num <- doc_id) {
-            intersections.filter(_ == num)
+            intersections = intersections.filter(_ == num)
           }
         }
       }
