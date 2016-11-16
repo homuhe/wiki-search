@@ -17,7 +17,6 @@ import scala.io.Source
   */
 object IndexSearch {
 
-
   var input = "medium_index.txt"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
@@ -52,39 +51,39 @@ object IndexSearch {
 
   def search(query: Array[String]): List[Int] = {
 
+    var mapvalues: List[Array[Int]] = List[Array[Int]]()
+    for (i <- query.indices) {mapvalues ::= inverted(query(i))}
+
     var results = List[Int]()
 
     try {
-
-
       if (query.length == 1) {
         results = inverted(query(0)).toList
       }
       else {
-        results = intersection(inverted(query(0)), inverted(query(1)))
+        results = intersect(mapvalues)
       }
-
-
     }
     catch {case _: Throwable => println("No results for query.")}
 
 
 
-
-    def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
-
+    def intersect(doc_ids: List[Array[Int]]): List[Int] = {
       var intersections: List[Int] = List[Int]()
-
-      for (doc1_num <- doc_ids1) {
-        for (doc2_num <- doc_ids2) {
-          if (doc1_num == doc2_num) {
-            intersections ::= doc1_num
+      if (intersections.isEmpty) {
+        for (num <- doc_ids.head) {
+          intersections ::= num
+        }
+      }
+      else {
+        for (doc_id <- doc_ids.tail) {
+          for (num <- doc_id) {
+            intersections.filter(_ == num)
           }
         }
       }
       intersections
     }
-
     results
   }
 }
