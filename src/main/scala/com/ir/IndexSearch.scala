@@ -53,13 +53,34 @@ object IndexSearch {
   def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
     var inter = Array[Int]()
+    var p1i = 0
+    var p2i = 0
+
+    while (p1i != doc_list1.length && p2i != doc_list2.length) {
+      val doc1 = doc_list1(p1i)
+      val doc2 = doc_list2(p2i)
+
+      if (doc1 == doc2) {
+        inter = inter :+ doc1
+        p1i += 1
+        p2i += 1
+      }
+      else if (doc1 < doc2) {
+        p1i += 1
+      }
+      else {
+        p2i += 1
+      }
+    }
+
+    /** NAIVE
     for (doc1 <- doc_list1) {
       for (doc2 <- doc_list2) {
         if (doc1 == doc2) {
           inter = inter :+ doc1
         }
       }
-    }
+    }      **/
     inter
   }
 
