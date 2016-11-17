@@ -39,7 +39,7 @@ object IndexSearch {
       //search(query).foreach(println)
 
 
-      println(getWikiTitles(inputWikiTitleFile, search(query)))
+      getWikiTitles(inputWikiTitleFile, search(query)).foreach(p => println(p._1 + ": " + p._2))
     }
   }
 
@@ -55,22 +55,12 @@ object IndexSearch {
     for (line <- lines) {
       val doc_id = line.split("\t")(0).toInt
       val title = line.split("\t")(1)
-        //.map(element => element.toInt)
 
       titleMap += doc_id -> title
     }
 
-    println(queryResults.deep.mkString("\n"))
+    //find matches
     queryResults.foreach(id => titleMatches += id -> titleMap(id) )
-
-    println("--- sort by doc_id")
-    println(titleMatches.toSeq.sortBy(_._1).mkString("\n"))
-
-    println("--- sort by titleName")
-    println(titleMatches.toSeq.sortBy(_._2).mkString("\n"))
-
-
-    //titleMatches
 
     titleMatches.toSeq.sortBy(_._1)
 
