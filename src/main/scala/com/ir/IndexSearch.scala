@@ -1,7 +1,7 @@
 package com.ir
 
 import scala.collection.mutable
-import scala.io.Source
+import scala.io.{Source, StdIn}
 
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
@@ -17,12 +17,10 @@ import scala.io.Source
   */
 object IndexSearch {
 
-
-  var input = "medium_index.txt"
+  var input = "big_index.txt"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
-
 
     if (args.length == 1) {
       input = args(0)
@@ -31,11 +29,12 @@ object IndexSearch {
     //input should be the file with the inverted indices produced in 1.1
     readIndex(input)
 
-    println("Please, type in the search terms and press Enter...")
-    val query = scala.io.StdIn.readLine().split("\\s+")
+    while (true) {
+      print("\nPlease, type in the search terms and press Enter: ")
+      val query = StdIn.readLine().split("\\s+").toList
 
-    search(query).foreach(doc_id => print(s" $doc_id"))
-
+      search(query).foreach(doc_id => print(s" $doc_id"))
+    }
   }
 
   def readIndex(file: String) = {
@@ -43,47 +42,73 @@ object IndexSearch {
 
     for (line <- lines) {
       val lemma = line.split("\t")(0)
-      val indices: Array[Int] = line.split("\t")(1)
+      val indices = line.split("\t")(1)
                                     .split("\\s+")
                                     .map(element => element.toInt)
+
       inverted += lemma -> indices
     }
   }
 
-  def search(query: Array[String]): List[Int] = {
+  def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
-    //TODO catch notFound Exception
-    //     Can be by length 1 or more.
-    var results = List[Int]()
+    var inter = Array[Int]()
+    var p1i = 0
+    var p2i = 0
 
-    try {
+    while (p1i != doc_list1.length && p2i != doc_list2.length) {
+      val doc1 = doc_list1(p1i)
+      val doc2 = doc_list2(p2i)
 
-
-      if (query.length == 1) {
-        results = inverted(query(0)).toList
+      if (doc1 == doc2) {
+        inter = inter :+ doc1
+        p1i += 1
+        p2i += 1
+      }
+      else if (doc1 < doc2) {
+        p1i += 1
       }
       else {
-        results = intersection(inverted(query(0)), inverted(query(1)))
+        p2i += 1
       }
-
-
     }
-    catch {case _: Throwable => println("No results for query.")}
 
-
-    def intersection(doc_ids1: Array[Int], doc_ids2: Array[Int]): List[Int] = {
-
-      var intersections: List[Int] = List[Int]()
-
-      for (doc1_num <- doc_ids1) {
-        for (doc2_num <- doc_ids2) {
-          if (doc1_num == doc2_num) {
-            intersections = doc1_num :: intersections
-          }
+    /** NAIVE
+    for (doc1 <- doc_list1) {
+      for (doc2 <- doc_list2) {
+        if (doc1 == doc2) {
+          inter = inter :+ doc1
         }
       }
-      intersections
+    }      **/
+    inter
+  }
+
+  def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
+    var intersections: Array[Int] = Array[Int]()
+
+    //just one query token, no intersections needed
+    if (doc_lists.length == 1)
+      intersections = doc_lists.head
+
+    //initialize intersection
+    for (num <- doc_lists.head) {
+      intersections = intersections :+ num
     }
-    results
+
+    for (doc_id <- doc_lists.tail) {
+      intersections = and(doc_id, intersections)
+    }
+    intersections
+  }
+
+  def search(query: List[String]): Array[Int] = {
+
+    //extract posting lists of query
+    var doc_lists: List[Array[Int]] = List[Array[Int]]()
+    for (i <- query.indices) {
+      doc_lists ::= inverted(query(i))
+    }
+    intersect(doc_lists)
   }
 }
