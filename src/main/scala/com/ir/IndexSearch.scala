@@ -111,7 +111,9 @@ object IndexSearch {
       try {
         doc_lists ::= inverted(query(i))
       }
-      catch {case _: Throwable => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None}
+      catch {
+        case _: Throwable if query.length > 1 => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None
+        case _: Throwable => println(s"No results for '${query(i)}' - Closing Wiki-Search"); sys.exit()}
     }
     intersect(doc_lists)
   }
