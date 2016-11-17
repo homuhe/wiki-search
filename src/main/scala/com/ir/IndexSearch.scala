@@ -25,11 +25,6 @@ object IndexSearch {
 
     var input = ""
 
-    def userinput = {
-      print("\nWiki-Search: ")
-      StdIn.readLine().split("\\s+").toList
-    }
-
     if (args.length == 2) {
       input = args(0)
       val inputWikiTitleFile = args(1)
@@ -50,6 +45,11 @@ object IndexSearch {
       }
     }
     else help()
+
+    def userinput = {
+      print("\nWiki-Search: ")
+      StdIn.readLine().split("\\s+").toList
+    }
   }
 
   /**
