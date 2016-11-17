@@ -107,7 +107,11 @@ object IndexSearch {
     //extract posting lists of query
     var doc_lists: List[Array[Int]] = List[Array[Int]]()
     for (i <- query.indices) {
-      doc_lists ::= inverted(query(i))
+
+      try {
+        doc_lists ::= inverted(query(i))
+      }
+      catch {case _: Throwable => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None}
     }
     intersect(doc_lists)
   }
