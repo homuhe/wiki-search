@@ -31,7 +31,7 @@ object IndexSearch {
     readIndex(input)
 
     while (true) {
-      print("\nPlease, type in the search terms and press Enter: ")
+      print("\nWiki-Search: ")
       val query = StdIn.readLine().split("\\s+").toList
 
       //search(query).foreach(doc_id => print(s" $doc_id"))
