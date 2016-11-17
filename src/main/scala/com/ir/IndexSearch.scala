@@ -6,8 +6,6 @@ import scala.io.{Source, StdIn}
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
   *
-  *               TEST
-  *
   * Task:         Assignment 1.2
   * Description:  Searches inverted indices file for the given terms.
   */
@@ -34,15 +32,9 @@ object IndexSearch {
       print("\nWiki-Search: ")
       val query = StdIn.readLine().split("\\s+").toList
 
-      //search(query).foreach(doc_id => print(s" $doc_id"))
-      //println()
-      //search(query).foreach(println)
-
-
       getWikiTitles(inputWikiTitleFile, search(query)).foreach(p => println(p._1 + ": " + p._2))
     }
   }
-
 
   def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
     var titleMap = mutable.HashMap[Int, String]()
@@ -63,7 +55,6 @@ object IndexSearch {
     queryResults.foreach(id => titleMatches += id -> titleMap(id) )
 
     titleMatches.toSeq.sortBy(_._1)
-
   }
 
   def readIndex(file: String) = {
@@ -124,21 +115,26 @@ object IndexSearch {
 
   def search(query: List[String]): Array[Int] = {
 
-    //extract posting lists of query
     var doc_lists: List[Array[Int]] = List[Array[Int]]()
-    for (i <- query.indices) {
 
-      try {
+    try {
+
+      //extract posting lists of query
+      for (i <- query.indices) {
         doc_lists ::= inverted(query(i))
       }
-      catch {
-        case _: Throwable if i != query.length-1 => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None
-        case _: Throwable => println(s"No results for '${query(i)}' - Closing Wiki-Search"); sys.exit()}
+
+      // sort the query term posting lists by the number of corresponding occurrences in the documents
+      doc_lists = doc_lists.sortWith(_.length < _.length)
+      val intersection = intersect(doc_lists)
+      if (intersection.length == 0) throw new Exception
+      intersection
+
     }
 
-    // sort the query term posting lists by the number of corresponding occurences in the documents
-    doc_lists = doc_lists.sortWith(_.length < _.length)
-
-    intersect(doc_lists)
+    catch {case _: Throwable =>
+      print("- No results -\n\nWiki-Search: ")
+      search(StdIn.readLine().split("\\s+").toList)
+    }
   }
 }
