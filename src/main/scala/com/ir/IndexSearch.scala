@@ -50,11 +50,11 @@ object IndexSearch {
     }
   }
 
-  def and(post_list1: Array[Int], post_list2: Array[Int]): Array[Int] = {
+  def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
     var inter = Array[Int]()
-    for (doc1 <- post_list1) {
-      for (doc2 <- post_list2) {
+    for (doc1 <- doc_list1) {
+      for (doc2 <- doc_list2) {
         if (doc1 == doc2) {
           inter = inter :+ doc1
         }
@@ -63,19 +63,19 @@ object IndexSearch {
     inter
   }
 
-  def intersect(posting_lists: List[Array[Int]]): Array[Int] = {
+  def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
     var intersections: Array[Int] = Array[Int]()
 
-    //just one query token
-    if (posting_lists.length == 1)
-      intersections = posting_lists.head
+    //just one query token, no intersections needed
+    if (doc_lists.length == 1)
+      intersections = doc_lists.head
 
     //initialize intersection
-    for (num <- posting_lists.head) {
+    for (num <- doc_lists.head) {
       intersections = intersections :+ num
     }
 
-    for (doc_id <- posting_lists.tail) {
+    for (doc_id <- doc_lists.tail) {
       intersections = and(doc_id, intersections)
     }
     intersections
@@ -84,10 +84,10 @@ object IndexSearch {
   def search(query: List[String]): Array[Int] = {
 
     //extract posting lists of query
-    var query_values: List[Array[Int]] = List[Array[Int]]()
+    var doc_lists: List[Array[Int]] = List[Array[Int]]()
     for (i <- query.indices) {
-      query_values ::= inverted(query(i))
+      doc_lists ::= inverted(query(i))
     }
-    intersect(query_values)
+    intersect(doc_lists)
   }
 }
