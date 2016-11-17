@@ -18,6 +18,7 @@ import scala.io.{Source, StdIn}
 object IndexSearch {
 
   var input = "big_index.txt"
+  var inputWikiTitleFile = "src/main/resources/tubadw-r1-ir-ids-1000.tab"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
@@ -33,8 +34,44 @@ object IndexSearch {
       print("\nPlease, type in the search terms and press Enter: ")
       val query = StdIn.readLine().split("\\s+").toList
 
-      search(query).foreach(doc_id => print(s" $doc_id"))
+      //search(query).foreach(doc_id => print(s" $doc_id"))
+      //println()
+      //search(query).foreach(println)
+
+
+      println(getWikiTitles(inputWikiTitleFile, search(query)))
     }
+  }
+
+
+  def getWikiTitles(file: String, queryResults: Array[Int]) : Map[Int, String] = {
+    var titleMap = mutable.HashMap[Int, String]()
+
+
+    var titleMatches = Map[Int, String]()
+
+    val lines = Source.fromFile(file).getLines()
+
+    for (line <- lines) {
+      val doc_id = line.split("\t")(0).toInt
+      val title = line.split("\t")(1)
+        //.map(element => element.toInt)
+
+      titleMap += doc_id -> title
+    }
+
+    println(queryResults.deep.mkString("\n"))
+    queryResults.foreach(id => titleMatches += id -> titleMap(id) )
+
+    println("--- sort by doc_id")
+    println(titleMatches.toSeq.sortBy(_._1).mkString("\n"))
+
+    println("--- sort by titleName")
+    println(titleMatches.toSeq.sortBy(_._2).mkString("\n"))
+
+
+    titleMatches
+
   }
 
   def readIndex(file: String) = {
