@@ -1,7 +1,7 @@
 package com.ir
 
 import scala.collection.mutable
-import scala.io.Source
+import scala.io.{Source, StdIn}
 
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
@@ -31,7 +31,7 @@ object IndexSearch {
 
     while (true) {
       print("\nPlease, type in the search terms and press Enter: ")
-      val query = scala.io.StdIn.readLine().split("\\s+").toList
+      val query = StdIn.readLine().split("\\s+").toList
 
       search(query).foreach(doc_id => print(s" $doc_id"))
     }
@@ -50,43 +50,44 @@ object IndexSearch {
     }
   }
 
-  def search(query: List[String]): Array[Int] = {
+  def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
-    var query_values: List[Array[Int]] = List[Array[Int]]()
-    for (i <- query.indices) {query_values ::= inverted(query(i))}
-
-    var results = Array[Int]()
-
-    if (query.length == 1) {
-      results = inverted(query.head)
-    }
-    else {
-      results = intersect(query_values)
-    }
-
-    def intersect(doc_ids: List[Array[Int]]): Array[Int] = {
-      var intersections: Array[Int] = Array[Int]()
-
-      for (num <- doc_ids.head) {
-        intersections = intersections :+ num
-      }
-      for (doc_id <- doc_ids.tail) {
-        intersections = and(doc_id, intersections)
-
-        def and(l1: Array[Int], l2: Array[Int]): Array[Int] = {
-          var inter = Array[Int]()
-          for (element1 <- l1) {
-            for (element2 <- l2) {
-              if (element1 == element2) {
-                inter = inter :+ element1
-              }
-            }
-          }
-          inter
+    var inter = Array[Int]()
+    for (doc1 <- doc_list1) {
+      for (doc2 <- doc_list2) {
+        if (doc1 == doc2) {
+          inter = inter :+ doc1
         }
       }
-      intersections
     }
-    results
+    inter
+  }
+
+  def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
+    var intersections: Array[Int] = Array[Int]()
+
+    //just one query token, no intersections needed
+    if (doc_lists.length == 1)
+      intersections = doc_lists.head
+
+    //initialize intersection
+    for (num <- doc_lists.head) {
+      intersections = intersections :+ num
+    }
+
+    for (doc_id <- doc_lists.tail) {
+      intersections = and(doc_id, intersections)
+    }
+    intersections
+  }
+
+  def search(query: List[String]): Array[Int] = {
+
+    //extract posting lists of query
+    var doc_lists: List[Array[Int]] = List[Array[Int]]()
+    for (i <- query.indices) {
+      doc_lists ::= inverted(query(i))
+    }
+    intersect(doc_lists)
   }
 }
