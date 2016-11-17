@@ -101,15 +101,6 @@ object IndexSearch {
         p2i += 1
       }
     }
-
-    /** NAIVE
-    for (doc1 <- doc_list1) {
-      for (doc2 <- doc_list2) {
-        if (doc1 == doc2) {
-          inter = inter :+ doc1
-        }
-      }
-    }      **/
     inter
   }
 
@@ -140,7 +131,9 @@ object IndexSearch {
       try {
         doc_lists ::= inverted(query(i))
       }
-      catch {case _: Throwable => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None}
+      catch {
+        case _: Throwable if i != query.length-1 => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None
+        case _: Throwable => println(s"No results for '${query(i)}' - Closing Wiki-Search"); sys.exit()}
     }
 
     // sort the query term posting lists by the number of corresponding occurences in the documents
