@@ -15,48 +15,47 @@ import scala.io.{Source, StdIn}
   */
 object IndexSearch {
 
-  var input = "big_index.txt"
-  var inputWikiTitleFile = "src/main/resources/tubadw-r1-ir-ids-1000.tab"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
+  /**
+    *
+    * @param args
+    */
   def main(args: Array[String]): Unit = {
 
-    if (args.length == 1) {
-      input = args(0)
-    }
+    var input = ""
 
-    //input should be the file with the inverted indices produced in 1.1
-    readIndex(input)
-
-    while (true) {
+    def userinput = {
       print("\nWiki-Search: ")
-      val query = StdIn.readLine().split("\\s+").toList
-
-      getWikiTitles(inputWikiTitleFile, search(query)).foreach(p => println(p._1 + ": " + p._2))
-    }
-  }
-
-  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
-    var titleMap = mutable.HashMap[Int, String]()
-
-
-    var titleMatches = Map[Int, String]()
-
-    val lines = Source.fromFile(file).getLines()
-
-    for (line <- lines) {
-      val doc_id = line.split("\t")(0).toInt
-      val title = line.split("\t")(1)
-
-      titleMap += doc_id -> title
+      StdIn.readLine().split("\\s+").toList
     }
 
-    //find matches
-    queryResults.foreach(id => titleMatches += id -> titleMap(id) )
+    if (args.length == 2) {
+      input = args(0)
+      val inputWikiTitleFile = args(1)
 
-    titleMatches.toSeq.sortBy(_._1)
+      readIndex(input)
+
+      while (true) {
+        getWikiTitles(inputWikiTitleFile, search(userinput)).foreach(p => println(p._1 + ": " + p._2))
+      }
+    }
+    else if (args.length == 1) {
+      input = args(0)
+
+      readIndex(input)
+
+      while (true) {
+        println(search(userinput).mkString("\n"))
+      }
+    }
+    else help()
   }
 
+  /**
+    *
+    * @param file
+    */
   def readIndex(file: String) = {
     val lines = Source.fromFile(file).getLines()
 
@@ -70,6 +69,12 @@ object IndexSearch {
     }
   }
 
+  /**
+    *
+    * @param doc_list1
+    * @param doc_list2
+    * @return
+    */
   def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
     var inter = Array[Int]()
@@ -95,10 +100,15 @@ object IndexSearch {
     inter
   }
 
+  /**
+    *
+    * @param doc_lists
+    * @return
+    */
   def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
     var intersections: Array[Int] = Array[Int]()
 
-    //just one query token, no intersections needed
+    //case for one query token, only
     if (doc_lists.length == 1)
       intersections = doc_lists.head
 
@@ -113,6 +123,11 @@ object IndexSearch {
     intersections
   }
 
+  /**
+    *
+    * @param query
+    * @return
+    */
   def search(query: List[String]): Array[Int] = {
 
     var doc_lists: List[Array[Int]] = List[Array[Int]]()
@@ -137,4 +152,40 @@ object IndexSearch {
       search(StdIn.readLine().split("\\s+").toList)
     }
   }
+
+  /**
+    *
+    * @param file
+    * @param queryResults
+    * @return
+    */
+  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
+    var titleMap = mutable.HashMap[Int, String]()
+    var titleMatches = Map[Int, String]()
+
+    val lines = Source.fromFile(file).getLines()
+
+    for (line <- lines) {
+      val doc_id = line.split("\t")(0).toInt
+      val title = line.split("\t")(1)
+
+      titleMap += doc_id -> title
+    }
+
+    //find matches
+    queryResults.foreach(id => titleMatches += id -> titleMap(id) )
+    titleMatches.toSeq.sortBy(_._1)
+  }
+
+  /**
+    *
+    * @return
+    */
+  def help() = {
+    println("Usage: ./query-index arg1 [OPTION]")
+    println("\t\targ1: INPUT1 - produced text file of inverted indices")
+    println("\t\t\t[OPTION] - text file with doc id - title mapping")
+    sys.exit()
+  }
+
 }

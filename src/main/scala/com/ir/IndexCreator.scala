@@ -13,8 +13,6 @@ import scala.io.Source
 
 object IndexCreator {
 
-  var input = "src/main/resources/tubadw-r1-ir-sample-1000"
-  var output = "big_index.txt"
   val inverted = mutable.HashMap[String, mutable.SortedSet[Int]]()
 
   /**
@@ -25,11 +23,10 @@ object IndexCreator {
     */
   def main(args: Array[String]): Unit = {
 
+    var input, output = ""
 
-    // mvn scala:run -DmainClass=com.ir.IndexCreator -DaddArgs='src/main/resources/tubadw-r1-ir-sample-1000|outputfilename'
-    // Achtung: output file wird im folder wo sich die pom.xml befindet erstellt.
-
-    if (args.length == 2) {
+    if (args.length != 2) help()
+    else {
       input = args(0)
       output = args(1)
     }
@@ -74,7 +71,6 @@ object IndexCreator {
     }
   }
 
-
   /**
     * Reads the stored map and writes it into a text file
     * @param file: String for the name of the output file
@@ -88,6 +84,13 @@ object IndexCreator {
         write("\n")
       }
     }
+  }
+
+  def help() = {
+    println("Usage: ./create-index arg1 arg2")
+    println("\t\targ1: INPUT - wiki text file in CONLL-X format")
+    println("\t\targ2: OUTPUT - file in which inverted indices will be written")
+    sys.exit()
   }
 
 }
