@@ -18,6 +18,7 @@ import scala.io.{Source, StdIn}
 object IndexSearch {
 
   var input = "big_index.txt"
+  var inputWikiTitleFile = "src/main/resources/tubadw-r1-ir-ids-1000.tab"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   def main(args: Array[String]): Unit = {
@@ -33,8 +34,36 @@ object IndexSearch {
       print("\nWiki-Search: ")
       val query = StdIn.readLine().split("\\s+").toList
 
-      search(query).foreach(doc_id => print(s" $doc_id"))
+      //search(query).foreach(doc_id => print(s" $doc_id"))
+      //println()
+      //search(query).foreach(println)
+
+
+      getWikiTitles(inputWikiTitleFile, search(query)).foreach(p => println(p._1 + ": " + p._2))
     }
+  }
+
+
+  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
+    var titleMap = mutable.HashMap[Int, String]()
+
+
+    var titleMatches = Map[Int, String]()
+
+    val lines = Source.fromFile(file).getLines()
+
+    for (line <- lines) {
+      val doc_id = line.split("\t")(0).toInt
+      val title = line.split("\t")(1)
+
+      titleMap += doc_id -> title
+    }
+
+    //find matches
+    queryResults.foreach(id => titleMatches += id -> titleMap(id) )
+
+    titleMatches.toSeq.sortBy(_._1)
+
   }
 
   def readIndex(file: String) = {
@@ -115,6 +144,10 @@ object IndexSearch {
         case _: Throwable if query.length > 1 => println(s"(NOTE: No results for '${query(i)}', therefore excluded from search)"); None
         case _: Throwable => println(s"No results for '${query(i)}' - Closing Wiki-Search"); sys.exit()}
     }
+
+    // sort the query term posting lists by the number of corresponding occurences in the documents
+    doc_lists = doc_lists.sortWith(_.length < _.length)
+
     intersect(doc_lists)
   }
 }
