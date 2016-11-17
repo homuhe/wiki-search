@@ -138,6 +138,10 @@ object IndexSearch {
     for (i <- query.indices) {
       doc_lists ::= inverted(query(i))
     }
+
+    // sort the query term posting lists by the number of corresponding occurences in the documents
+    doc_lists = doc_lists.sortWith(_.length < _.length)
+
     intersect(doc_lists)
   }
 }
