@@ -44,7 +44,7 @@ object IndexSearch {
   }
 
 
-  def getWikiTitles(file: String, queryResults: Array[Int]) : Map[Int, String] = {
+  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
     var titleMap = mutable.HashMap[Int, String]()
 
 
@@ -70,7 +70,9 @@ object IndexSearch {
     println(titleMatches.toSeq.sortBy(_._2).mkString("\n"))
 
 
-    titleMatches
+    //titleMatches
+
+    titleMatches.toSeq.sortBy(_._1)
 
   }
 
