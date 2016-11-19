@@ -1,9 +1,11 @@
 # Wiki-Search
 HS Information Retrieval WS16/17 - Assignment 1
 
+
 Simple search engine for a set of German Wikipedia pages.
 
 Creates inverted indices & uses a boolean model to query search requests.
+
 
 
 **Usage:**
@@ -26,7 +28,9 @@ Creates inverted indices & uses a boolean model to query search requests.
 
 
 
-Authors:
-Alexander Hartmann (@harambe4president)
 
-Holger Muth-Hellebrandt (@homuhe)
+Authors:
+
+*Alexander Hartmann (@harambe4president)
+
+Holger Muth-Hellebrandt (@homuhe)*
