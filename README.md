@@ -21,3 +21,12 @@ Simple search engine for a set of German Wikipedia pages. Creates inverted indic
   arg1: INPUT1 - produced text file of inverted indices
   [OPTION] - text file with doc id - title mapping
 ```
+ 
+ 
+ 
+  
+  
+  
+Authors:
+
+Alexander Hartmann, Holger Muth-Hellebrandt
