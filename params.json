@@ -1,6 +1,6 @@
 {
   "name": "Wiki-search",
   "tagline": "HS Information Retrieval WS16/17 - Assignment 1",
-  "body": "#HS Information Retrieval WS16/17 - Assignment 1\r\n\r\nSmall search engine that uses a boolean model to query a set of German Wikipedia pages.\r\n",
+  "body": "# Wiki-Search\r\nHS Information Retrieval WS16/17 - Assignment 1\r\n\r\n\r\nSimple search engine for a set of German Wikipedia pages. Creates inverted indices & uses a boolean model to query search requests.\r\n\r\n\r\n\r\n**Usage:**\r\n- 1.1 creating indices\r\n```\r\n./create-index arg1 arg2\r\n  arg1: INPUT - wiki text file in CONLL-X format\r\n  arg2: OUTPUT - file in which inverted indices will be written\r\n```\r\n  \r\n- 1.2 query indices\r\n\r\n```\r\n./query-index arg1 [OPTION]\r\n  arg1: INPUT1 - produced text file of inverted indices\r\n  [OPTION] - text file with doc id - title mapping\r\n```\r\n \r\n \r\n \r\n  \r\n  \r\n  \r\nAuthors:\r\n\r\nAlexander Hartmann, Holger Muth-Hellebrandt\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }

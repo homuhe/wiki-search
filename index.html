@@ -29,9 +29,35 @@
       </header>
       <section>
         <h1>
-<a id="hs-information-retrieval-ws1617---assignment-1" class="anchor" href="#hs-information-retrieval-ws1617---assignment-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>HS Information Retrieval WS16/17 - Assignment 1</h1>
+<a id="wiki-search" class="anchor" href="#wiki-search" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Wiki-Search</h1>
 
-<p>Small search engine that uses a boolean model to query a set of German Wikipedia pages.</p>
+<p>HS Information Retrieval WS16/17 - Assignment 1</p>
+
+<p>Simple search engine for a set of German Wikipedia pages. Creates inverted indices &amp; uses a boolean model to query search requests.</p>
+
+<p><strong>Usage:</strong></p>
+
+<ul>
+<li>1.1 creating indices</li>
+</ul>
+
+<pre><code>./create-index arg1 arg2
+  arg1: INPUT - wiki text file in CONLL-X format
+  arg2: OUTPUT - file in which inverted indices will be written
+</code></pre>
+
+<ul>
+<li>1.2 query indices</li>
+</ul>
+
+<pre><code>./query-index arg1 [OPTION]
+  arg1: INPUT1 - produced text file of inverted indices
+  [OPTION] - text file with doc id - title mapping
+</code></pre>
+
+<p>Authors:</p>
+
+<p>Alexander Hartmann, Holger Muth-Hellebrandt</p>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/homuhe">homuhe</a></p>
