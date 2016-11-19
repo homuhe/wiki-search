@@ -7,24 +7,23 @@ import scala.io.{Source, StdIn}
   *               Holger Muth-Hellebrandt
   *
   * Task:         Assignment 1.2
-  * Description:  Searches inverted indices file for the given terms.
+  * Description:  Processes query of user input on inverted indices file.
   */
 
-/**
-  * IndexSearch:
-  */
 object IndexSearch {
 
   val inverted = mutable.HashMap[String, Array[Int]]()
 
   /**
-    *
-    * @param args
+    * Main method which takes one obligatory & one optional argument:
+    * 1)  INPUT: created inverted indices file from IndexCreator (Assignment 1.1)
+    * 2) OPTION: file with document identifier -> wiki title mapping
     */
   def main(args: Array[String]): Unit = {
 
     var input = ""
 
+    //query with title mapping
     if (args.length == 2) {
       input = args(0)
       val inputWikiTitleFile = args(1)
@@ -35,6 +34,7 @@ object IndexSearch {
         getWikiTitles(inputWikiTitleFile, search(userinput)).foreach(p => println(p._1 + ": " + p._2))
       }
     }
+    //query without title mapping
     else if (args.length == 1) {
       input = args(0)
 
@@ -53,8 +53,8 @@ object IndexSearch {
   }
 
   /**
-    *
-    * @param file
+    * Reads in created inverted indices file from IndexCreator
+    * @param file: inverted indices file with word type -> posting list mapping
     */
   def readIndex(file: String) = {
     val lines = Source.fromFile(file).getLines()
@@ -70,10 +70,10 @@ object IndexSearch {
   }
 
   /**
-    *
-    * @param doc_list1
-    * @param doc_list2
-    * @return
+    * Enhanced AND function of two arguments (parallel processing)
+    * @param doc_list1 1st argument of AND function
+    * @param doc_list2 2nd argument of AND function
+    * @return returns intersection of 1st & 2nd argument
     */
   def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
@@ -101,9 +101,9 @@ object IndexSearch {
   }
 
   /**
-    *
-    * @param doc_lists
-    * @return
+    * Calls AND function and stores intersections of query
+    * @param doc_lists postings lists of query
+    * @return intersections of postings lists
     */
   def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
     var intersections: Array[Int] = Array[Int]()
@@ -112,11 +112,12 @@ object IndexSearch {
     if (doc_lists.length == 1)
       intersections = doc_lists.head
 
-    //initialize intersection
+    //initialize intersections
     for (num <- doc_lists.head) {
       intersections = intersections :+ num
     }
 
+    //call AND function on prev. intersection results as long as arguments are given
     for (doc_id <- doc_lists.tail) {
       intersections = and(doc_id, intersections)
     }
@@ -124,9 +125,9 @@ object IndexSearch {
   }
 
   /**
-    *
-    * @param query
-    * @return
+    * Handles query requests
+    * @param query user input split at whitespace
+    * @return document identifiers from processed query
     */
   def search(query: List[String]): Array[Int] = {
 
@@ -139,14 +140,15 @@ object IndexSearch {
         doc_lists ::= inverted(query(i))
       }
 
-      // sort the query term posting lists by the number of corresponding occurrences in the documents
+      //sort query term posting lists by length (smallest first)
       doc_lists = doc_lists.sortWith(_.length < _.length)
+
       val intersection = intersect(doc_lists)
       if (intersection.length == 0) throw new Exception
       intersection
 
     }
-
+    //new input if no results due to no entry found or no intersection
     catch {case _: Throwable =>
       print("- No results -\n\nWiki-Search: ")
       search(StdIn.readLine().split("\\s+").toList)
@@ -154,10 +156,10 @@ object IndexSearch {
   }
 
   /**
-    *
-    * @param file
-    * @param queryResults
-    * @return
+    * Maps document identifiers to Wiki titles
+    * @param file mapping file with doc id -> Wiki title stored
+    * @param queryResults document identifiers
+    * @return Map of doc id -> Wiki title
     */
   def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
     var titleMap = mutable.HashMap[Int, String]()
@@ -173,13 +175,12 @@ object IndexSearch {
     }
 
     //find matches
-    queryResults.foreach(id => titleMatches += id -> titleMap(id) )
+    queryResults.foreach(id => titleMatches += id -> titleMap(id))
     titleMatches.toSeq.sortBy(_._1)
   }
 
   /**
-    *
-    * @return
+    * Help function for correct usage
     */
   def help() = {
     println("Usage: ./query-index arg1 [OPTION]")
