@@ -29,8 +29,8 @@ Creates inverted indices & uses a boolean model to query search requests.
 
 
 
-Authors:
+*Authors:*
 
-*Alexander Hartmann (@harambe4president)
+*Alexander Hartmann (@harambe4president)*
 
-Holger Muth-Hellebrandt (@homuhe)*
+*Holger Muth-Hellebrandt (@homuhe)*
