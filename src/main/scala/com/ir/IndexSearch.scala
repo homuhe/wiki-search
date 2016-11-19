@@ -6,66 +6,56 @@ import scala.io.{Source, StdIn}
 /** Author:       Alexander Hartmann,
   *               Holger Muth-Hellebrandt
   *
-  *               TEST
-  *
   * Task:         Assignment 1.2
-  * Description:  Searches inverted indices file for the given terms.
+  * Description:  Processes query of user input on inverted indices file.
   */
 
-/**
-  * IndexSearch:
-  */
 object IndexSearch {
 
-  var input = "big_index.txt"
-  var inputWikiTitleFile = "src/main/resources/tubadw-r1-ir-ids-1000.tab"
   val inverted = mutable.HashMap[String, Array[Int]]()
 
+  /**
+    * Main method which takes one obligatory & one optional argument:
+    * 1)  INPUT: created inverted indices file from IndexCreator (Assignment 1.1)
+    * 2) OPTION: file with document identifier -> wiki title mapping
+    */
   def main(args: Array[String]): Unit = {
 
-    if (args.length == 1) {
+    var input = ""
+
+    //query with title mapping
+    if (args.length == 2) {
       input = args(0)
+      val inputWikiTitleFile = args(1)
+
+      readIndex(input)
+
+      while (true) {
+        getWikiTitles(inputWikiTitleFile, search(userinput)).foreach(p => println(p._1 + ": " + p._2))
+      }
     }
+    //query without title mapping
+    else if (args.length == 1) {
+      input = args(0)
 
-    //input should be the file with the inverted indices produced in 1.1
-    readIndex(input)
+      readIndex(input)
 
-    while (true) {
-      print("\nPlease, type in the search terms and press Enter: ")
-      val query = StdIn.readLine().split("\\s+").toList
+      while (true) {
+        println(search(userinput).mkString("\n"))
+      }
+    }
+    else help()
 
-      //search(query).foreach(doc_id => print(s" $doc_id"))
-      //println()
-      //search(query).foreach(println)
-
-
-      getWikiTitles(inputWikiTitleFile, search(query)).foreach(p => println(p._1 + ": " + p._2))
+    def userinput = {
+      print("\nWiki-Search: ")
+      StdIn.readLine().split("\\s+").toList
     }
   }
 
-
-  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
-    var titleMap = mutable.HashMap[Int, String]()
-
-
-    var titleMatches = Map[Int, String]()
-
-    val lines = Source.fromFile(file).getLines()
-
-    for (line <- lines) {
-      val doc_id = line.split("\t")(0).toInt
-      val title = line.split("\t")(1)
-
-      titleMap += doc_id -> title
-    }
-
-    //find matches
-    queryResults.foreach(id => titleMatches += id -> titleMap(id) )
-
-    titleMatches.toSeq.sortBy(_._1)
-
-  }
-
+  /**
+    * Reads in created inverted indices file from IndexCreator
+    * @param file: inverted indices file with word type -> posting list mapping
+    */
   def readIndex(file: String) = {
     val lines = Source.fromFile(file).getLines()
 
@@ -79,6 +69,12 @@ object IndexSearch {
     }
   }
 
+  /**
+    * Enhanced AND function of two arguments (parallel processing)
+    * @param doc_list1 1st argument of AND function
+    * @param doc_list2 2nd argument of AND function
+    * @return returns intersection of 1st & 2nd argument
+    */
   def and(doc_list1: Array[Int], doc_list2: Array[Int]): Array[Int] = {
 
     var inter = Array[Int]()
@@ -101,47 +97,96 @@ object IndexSearch {
         p2i += 1
       }
     }
-
-    /** NAIVE
-    for (doc1 <- doc_list1) {
-      for (doc2 <- doc_list2) {
-        if (doc1 == doc2) {
-          inter = inter :+ doc1
-        }
-      }
-    }      **/
     inter
   }
 
+  /**
+    * Calls AND function and stores intersections of query
+    * @param doc_lists postings lists of query
+    * @return intersections of postings lists
+    */
   def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
     var intersections: Array[Int] = Array[Int]()
 
-    //just one query token, no intersections needed
+    //case for one query token, only
     if (doc_lists.length == 1)
       intersections = doc_lists.head
 
-    //initialize intersection
+    //initialize intersections
     for (num <- doc_lists.head) {
       intersections = intersections :+ num
     }
 
+    //call AND function on prev. intersection results as long as arguments are given
     for (doc_id <- doc_lists.tail) {
       intersections = and(doc_id, intersections)
     }
     intersections
   }
 
+  /**
+    * Handles query requests
+    * @param query user input split at whitespace
+    * @return document identifiers from processed query
+    */
   def search(query: List[String]): Array[Int] = {
 
-    //extract posting lists of query
     var doc_lists: List[Array[Int]] = List[Array[Int]]()
-    for (i <- query.indices) {
-      doc_lists ::= inverted(query(i))
+
+    try {
+
+      //extract posting lists of query
+      for (i <- query.indices) {
+        doc_lists ::= inverted(query(i))
+      }
+
+      //sort query term posting lists by length (smallest first)
+      doc_lists = doc_lists.sortWith(_.length < _.length)
+
+      val intersection = intersect(doc_lists)
+      if (intersection.length == 0) throw new Exception
+      intersection
+
+    }
+    //new input if no results due to no entry found or no intersection
+    catch {case _: Throwable =>
+      print("- No results -\n\nWiki-Search: ")
+      search(StdIn.readLine().split("\\s+").toList)
+    }
+  }
+
+  /**
+    * Maps document identifiers to Wiki titles
+    * @param file mapping file with doc id -> Wiki title stored
+    * @param queryResults document identifiers
+    * @return Map of doc id -> Wiki title
+    */
+  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
+    var titleMap = mutable.HashMap[Int, String]()
+    var titleMatches = Map[Int, String]()
+
+    val lines = Source.fromFile(file).getLines()
+
+    for (line <- lines) {
+      val doc_id = line.split("\t")(0).toInt
+      val title = line.split("\t")(1)
+
+      titleMap += doc_id -> title
     }
 
-    // sort the query term posting lists by the number of corresponding occurences in the documents
-    doc_lists = doc_lists.sortWith(_.length < _.length)
-
-    intersect(doc_lists)
+    //find matches
+    queryResults.foreach(id => titleMatches += id -> titleMap(id))
+    titleMatches.toSeq.sortBy(_._1)
   }
+
+  /**
+    * Help function for correct usage
+    */
+  def help() = {
+    println("Usage: ./query-index arg1 [OPTION]")
+    println("\t\targ1: INPUT1 - produced text file of inverted indices")
+    println("\t\t\t[OPTION] - text file with doc id - title mapping")
+    sys.exit()
+  }
+
 }

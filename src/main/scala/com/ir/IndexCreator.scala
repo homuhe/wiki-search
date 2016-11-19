@@ -8,28 +8,24 @@ import scala.io.Source
   *               Holger Muth-Hellebrandt
   *
   * Task:         Assignment 1.1
-  * Description:  Creates inverted indices of types occurring in resource.
+  * Description:  Creates inverted indices of postings lists out of resource.
   */
 
 object IndexCreator {
 
-  var input = "src/main/resources/tubadw-r1-ir-sample-1000"
-  var output = "big_index.txt"
   val inverted = mutable.HashMap[String, mutable.SortedSet[Int]]()
 
   /**
-    * Main method including an option for the command line to execute the programm
-    * which takes the arguments:
-    * 1) input: the given wiki file in the CONLL-X format
-    * 2) output: name of the output file for the inverted indices created
+    * Main method which takes two arguments:
+    * 1)  INPUT: the given wiki file in CONLL-X format
+    * 2) OUTPUT: name of output file for the inverted indices created
     */
   def main(args: Array[String]): Unit = {
 
+    var input, output = ""
 
-    // mvn scala:run -DmainClass=com.ir.IndexCreator -DaddArgs='src/main/resources/tubadw-r1-ir-sample-1000|outputfilename'
-    // Achtung: output file wird im folder wo sich die pom.xml befindet erstellt.
-
-    if (args.length == 2) {
+    if (args.length != 2) help()
+    else {
       input = args(0)
       output = args(1)
     }
@@ -45,7 +41,7 @@ object IndexCreator {
 
   /**
     * Reads input file and separates at tabs
-    * @param file: set of German Wiki in tab-separated CONLL-X dependency format
+    * @param file: set of German Wikis in tab-separated CONLL-X dependency format
     * @return lines: Iterator over an array of strings
     */
   def extractLines(file: String) = {
@@ -56,7 +52,7 @@ object IndexCreator {
   }
 
   /**
-    * Creates a Hashmap which maps each type to document identifier.
+    * Fills a HashMap which maps type of word to document identifier.
     * @param lines: Iterator over an array of strings
     */
   def createIndices(lines: Iterator[Array[String]]) = {
@@ -74,10 +70,9 @@ object IndexCreator {
     }
   }
 
-
   /**
-    * Reads the stored map and writes it into a text file
-    * @param file: String for the name of the output file
+    * Writes created HashMap into text file
+    * @param file: String for name of output file
     */
   def writeIndices(file: String) = {
     new PrintWriter(file) {
@@ -90,4 +85,13 @@ object IndexCreator {
     }
   }
 
+  /**
+    * Help function for correct usage
+    */
+  def help() = {
+    println("Usage: ./create-index arg1 arg2")
+    println("\t\targ1: INPUT - wiki text file in CONLL-X format")
+    println("\t\targ2: OUTPUT - file in which inverted indices will be written")
+    sys.exit()
+  }
 }

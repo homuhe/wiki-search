@@ -35,9 +35,3 @@ build.log
 # switch to regexp syntax.
 #  syntax: regexp
 #  ^\.pc/
-
-/src/main/resources/tubadw-r1-ir-sample-100000
-/src/main/resources/tubadw-r1-ir-sample-100000.gz
-/src/main/output/index.txt
-/index.txt
-/medium_index.txt
