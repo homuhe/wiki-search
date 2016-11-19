@@ -23,14 +23,3 @@ Creates inverted indices & uses a boolean model to query search requests.
   arg1: INPUT1 - produced text file of inverted indices
   [OPTION] - text file with doc id - title mapping
 ```
-
-
-
-
-
-
-*Authors:*
-
-*Alexander Hartmann (@harambe4president)*
-
-*Holger Muth-Hellebrandt (@homuhe)*
