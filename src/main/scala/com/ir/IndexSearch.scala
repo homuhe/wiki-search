@@ -109,13 +109,17 @@ object IndexSearch {
     var intersections: Array[Int] = Array[Int]()
 
     //case for one query token, only
-    if (doc_lists.length == 1)
-      intersections = doc_lists.head
+    //if (doc_lists.length == 1)
+    intersections = doc_lists.head
+
+    println(intersections.length)
 
     //initialize intersections
-    for (num <- doc_lists.head) {
-      intersections = intersections :+ num
-    }
+//    for (num <- doc_lists.head) {
+//      intersections = intersections :+ num
+//    }
+//    println(intersections.length)
+
 
     //call AND function on prev. intersection results as long as arguments are given
     for (doc_id <- doc_lists.tail) {
