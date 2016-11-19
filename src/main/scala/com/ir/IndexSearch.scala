@@ -108,22 +108,12 @@ object IndexSearch {
   def intersect(doc_lists: List[Array[Int]]): Array[Int] = {
     var intersections: Array[Int] = Array[Int]()
 
-    //case for one query token, only
-    //if (doc_lists.length == 1)
+    //initialize intersections with the postings list of the first search term
     intersections = doc_lists.head
 
-    println(intersections.length)
-
-    //initialize intersections
-//    for (num <- doc_lists.head) {
-//      intersections = intersections :+ num
-//    }
-//    println(intersections.length)
-
-
-    //call AND function on prev. intersection results as long as arguments are given
-    for (doc_id <- doc_lists.tail) {
-      intersections = and(doc_id, intersections)
+    //call AND function on prev. intersection results as long as postings lists are given
+    for (postingsList <- doc_lists.tail) {
+      intersections = and(postingsList, intersections)
     }
     intersections
   }
@@ -178,7 +168,8 @@ object IndexSearch {
       titleMap += doc_id -> title
     }
 
-    //find matches
+    //find matches: for each number in the postingslist of a query result
+    //save the corresponding wiki title
     queryResults.foreach(id => titleMatches += id -> titleMap(id))
     titleMatches.toSeq.sortBy(_._1)
   }
