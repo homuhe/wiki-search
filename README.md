@@ -17,4 +17,4 @@ HOW TO RUN:
 
 ./query-index arg1 [OPTION]
   arg1: INPUT1 - produced text file of inverted indices
-  arg2: [OPTION] - text file with doc id - title mapping
+  [OPTION] - text file with doc id - title mapping
