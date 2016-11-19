@@ -2,10 +2,11 @@
 HS Information Retrieval WS16/17 - Assignment 1
 
 Simple search engine for a set of German Wikipedia pages.
+
 Creates inverted indices & uses a boolean model to query search requests.
 
 
-`HOW TO RUN:`
+**Usage:**
 - 1.1 creating indices
 ```
 ./create-index arg1 arg2
@@ -20,3 +21,12 @@ Creates inverted indices & uses a boolean model to query search requests.
   arg1: INPUT1 - produced text file of inverted indices
   [OPTION] - text file with doc id - title mapping
 ```
+
+
+
+
+
+Authors:
+Alexander Hartmann (@harambe4president)
+
+Holger Muth-Hellebrandt (@homuhe)
