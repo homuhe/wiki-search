@@ -140,7 +140,7 @@ object IndexSearch {
         doc_lists ::= inverted(query(i))
       }
 
-      //sort query term posting lists by length (smallest first)
+      //BONUS 1: sort query term posting lists by length (smallest first)
       doc_lists = doc_lists.sortWith(_.length < _.length)
 
       val intersection = intersect(doc_lists)
@@ -156,7 +156,7 @@ object IndexSearch {
   }
 
   /**
-    * Maps document identifiers to Wiki titles
+    * BONUS 2: Maps document identifiers to Wiki titles
     * @param file mapping file with doc id -> Wiki title stored
     * @param queryResults document identifiers
     * @return Map of doc id -> Wiki title
