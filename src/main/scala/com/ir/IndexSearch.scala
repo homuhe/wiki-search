@@ -1,6 +1,6 @@
 package com.ir
 
-import scala.collection.mutable
+import scala.collection.{SortedMap, mutable}
 import scala.io.{Source, StdIn}
 
 /** Author:       Alexander Hartmann,
@@ -48,7 +48,7 @@ object IndexSearch {
 
     def userinput = {
       print("\nWiki-Search: ")
-      StdIn.readLine().split("\\s+").toList
+      StdIn.readLine().split("\\s+")
     }
   }
 
@@ -129,7 +129,7 @@ object IndexSearch {
     * @param query user input split at whitespace
     * @return document identifiers from processed query
     */
-  def search(query: List[String]): Array[Int] = {
+  def search(query: Array[String]): Array[Int] = {
 
     var doc_lists: List[Array[Int]] = List[Array[Int]]()
 
@@ -151,7 +151,7 @@ object IndexSearch {
     //new input if no results due to no entry found or no intersection
     catch {case _: Throwable =>
       print("- No results -\n\nWiki-Search: ")
-      search(StdIn.readLine().split("\\s+").toList)
+      search(StdIn.readLine().split("\\s+"))
     }
   }
 
@@ -161,9 +161,9 @@ object IndexSearch {
     * @param queryResults document identifiers
     * @return Map of doc id -> Wiki title
     */
-  def getWikiTitles(file: String, queryResults: Array[Int]) : Seq[(Int, String)] = {
+  def getWikiTitles(file: String, queryResults: Array[Int]) : SortedMap[Int, String] = {
     var titleMap = mutable.HashMap[Int, String]()
-    var titleMatches = Map[Int, String]()
+    var titleMatches = SortedMap[Int, String]()
 
     val lines = Source.fromFile(file).getLines()
 
@@ -176,7 +176,7 @@ object IndexSearch {
 
     //find matches
     queryResults.foreach(id => titleMatches += id -> titleMap(id))
-    titleMatches.toSeq.sortBy(_._1)
+    titleMatches
   }
 
   /**
